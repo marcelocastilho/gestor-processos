@@ -1,0 +1,86 @@
+Projeto Softplan
+
+Frontend
+	Java Script
+
+Backend 
+	Maven
+	Java 
+	Framework Spring Boot
+	JPA
+
+Banco de dados
+	H2
+
+
+Tarefas
+	Criar Projeto 
+		2h
+	Expor REST Consulta Processos
+		4h
+
+	Expor REST Consulta Responsavel
+		4h
+		Parte do nome do responsável
+		Cpf (formatado e não formatado)
+		Por número do processo que o responsável esteja vinculado (número do processo formatado e não formatado)
+
+	Criar entidade Situacao e ligar ao processo
+		2h
+
+	Expor REST cadastro Processo
+		2h
+
+	Validações cadastro Processo
+		4h
+
+	Enviar Email cadastro Processo
+		2h
+
+	Expor Rest para listar processos e processos filhos
+		4h
+
+	Expor REST Edição de Processo (quando != finalizada)
+		2h
+		Enviar Email para novos envolvido
+			2h
+
+	Expor REST para excluir processos (quando != finalizada e != de 'processo tem filhos')
+		2h
+
+	Expor REST para cadastrar e editar Responsável
+		4h
+		2h(foto)
+
+	Expor REST para excluir Responsável(quando != de 'vinculado a um processo')
+		4h
+		2h(foto)
+
+	Total backend 42 horas
+
+Telas
+	Gestão de processos - Consulta processo
+		6h
+
+	Gestão de processos - Cadastro processo
+		4h
+
+	Gestão de processos - Editar processo
+		4h
+
+	Gestão de processos - Consultar responsável
+		4h
+
+	Gestão de processos - Cadastrar responsável
+		2h
+		2h(foto)
+
+	Total frontend 22 
+
+Docker
+	4h
+
+Testes
+	6h
+
+Total de horas 72 horas
