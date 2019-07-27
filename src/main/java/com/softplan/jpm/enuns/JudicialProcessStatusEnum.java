@@ -1,6 +1,6 @@
-package com.softplan.processmanagement.enuns;
+package com.softplan.jpm.enuns;
 
-public enum JudicialProcessStatus {
+public enum JudicialProcessStatusEnum {
 
 	EM_ANDAMENTO("Em andamento", false),
 	DESMEMBRADO("Desmembrado", false),
@@ -11,7 +11,7 @@ public enum JudicialProcessStatus {
 	private String status;
 	private boolean closed;
 
-	JudicialProcessStatus(String status, boolean closed) {
+	JudicialProcessStatusEnum(String status, boolean closed) {
 		this.status = status;
 		this.closed = closed;
 	}
