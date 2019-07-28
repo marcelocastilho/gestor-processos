@@ -1,45 +1,63 @@
 package com.softplan.jpm.entities;
 
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.validation.constraints.Size;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class JudicialProcess {
 	
+	@Id
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="judicialProcess_sequence")
+	@SequenceGenerator(name="judicialProcess_sequence", sequenceName="jp_seq")
 	private long id;
-	@Size(min = 10)
-	private String uniqueProcessId;
-	private LocalDate distributionDate;
-	private boolean secret;
-	private String physicalPath;
 	
+	//@Size(min = 10)
+	//@Column(unique=true)
+	private String uniqueProcessId;
+
+	private LocalDate distributionDate;
+
+	private boolean secret;
+
+	private String physicalPath;
+
 	@Column(columnDefinition = "text")
 	private String description;
-	
-	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)    
-    public long getId() {
-        return id;
-    }	
-	
-	@ManyToMany
-	@JoinTable(name = "joinTable", 
-			   joinColumns= {@JoinColumn(name="JudicialProcessId")}, 
-			   inverseJoinColumns= {@JoinColumn(name="ResponsableId")}
-	)
-	private HashSet<Responsable> responsables;
 
+	public long getId() {
+		return id;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "judicial_process_id")
+	private List<JudicialProcessResponsable> judicialProcessResponsables = new ArrayList<JudicialProcessResponsable>();
+
+	public JudicialProcess(String uniqueProcessId, boolean secret, LocalDate distributionDate, String physicalPath) {		
+		this.uniqueProcessId = uniqueProcessId;
+		this.secret = secret;
+		this.distributionDate = distributionDate;
+		this.physicalPath = physicalPath;
+	}
+	
+	public JudicialProcess() {
+		
+	}
+	
 	public String getUniqueProcessId() {
 		return uniqueProcessId;
 	}
@@ -80,23 +98,28 @@ public class JudicialProcess {
 		this.description = description;
 	}
 
-	public void setId(long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
-	
-	public void addResponsable(Responsable responsable) {
-		if(this.responsables == null) {
-			this.responsables = new HashSet<Responsable>();
-		}	
-		responsables.add(responsable);		
-	}
 
-	public HashSet<Responsable> getResponsables() {
-		return responsables;
-	}
+//	public void addJudicialProcessResponsables(JudicialProcessResponsable judicialProcessResponsable) {
+//		if(this.judicialProcessResponsables == null) {
+//			this.judicialProcessResponsables = new ArrayList<JudicialProcessResponsable>();
+//		}	
+//		judicialProcessResponsables.add(judicialProcessResponsable);		
+//	}
 
-	public void setResponsables(HashSet<Responsable> responsables) {
-		this.responsables = responsables;
-	}
-	
+//	public List<JudicialProcessResponsable> getJudicialProcessResponsables() {
+//		return judicialProcessResponsables;
+//	}	
+
+//	@Override
+//	public String toString() {
+//		return "JudicialProcess{" +
+//				"uniqueProcessId=" + uniqueProcessId +
+//				", distributionDate='" + distributionDate.toString() + '\'' +
+//				", responsables='" + responsables.stream().map(Responsable::getName).collect(Collectors.toList()) + '\'' +
+//				'}';
+//	}
+
 }

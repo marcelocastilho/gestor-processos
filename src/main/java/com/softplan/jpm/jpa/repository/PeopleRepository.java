@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.softplan.jpm.entities.Responsable;
+import com.softplan.jpm.entities.People;
 
 @Repository
-public interface ResponsableRepository extends JpaRepository<Responsable, Long> {
+public interface PeopleRepository extends JpaRepository<People, Long> {
 
-    List<Responsable> findAll();
+    List<People> findAll();
 
 }

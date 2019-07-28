@@ -10,6 +10,7 @@ import com.softplan.jpm.entities.JudicialProcess;
 @Repository
 public interface JudicialProcessRepository extends JpaRepository<JudicialProcess, Long> {
 
+	//@Query("select judicialProcess from JudicialProcess judicialProcess left join item.responsables")
     List<JudicialProcess> findAll();
 
 }

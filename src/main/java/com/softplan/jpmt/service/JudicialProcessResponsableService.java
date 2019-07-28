@@ -1,32 +1,25 @@
 package com.softplan.jpmt.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.softplan.jpm.entities.JudicialProcess;
-import com.softplan.jpm.jpa.repository.JudicialProcessRepository;
+import com.softplan.jpm.entities.JudicialProcessResponsable;
+import com.softplan.jpm.jpa.repository.JudicialProcessResponsableRepository;
 
 @Service
-public class JudicialProcessService {
+public class JudicialProcessResponsableService {
 
 	@Autowired
-	private JudicialProcessRepository judicialProcessRepository;
+	private JudicialProcessResponsableRepository judicialProcessResponsableRepository;
 
-	public List<JudicialProcess> getAllJudicialProcess() {
-		List<JudicialProcess> judicialProcess = judicialProcessRepository.findAll();
-		return judicialProcess;
+	public JudicialProcessResponsable getJudicialProcessResponsableByJudicialProcessId(long id) {
+		JudicialProcessResponsable judicialProcessResponsable = judicialProcessResponsableRepository.getOne(id);
+		return judicialProcessResponsable;
 	}
 	
-	public JudicialProcess persistJudicialProcess(JudicialProcess judicialProcess) {
+	public JudicialProcessResponsable persistJudicialProcess(JudicialProcessResponsable judicialProcessResponsable) {
 		
-		return judicialProcessRepository.save(judicialProcess);
-	}
-	
-	public JudicialProcess getById(long id) {
-		
-		return judicialProcessRepository.getOne(id);
+		return judicialProcessResponsableRepository.save(judicialProcessResponsable);
 	}
 	
 //	public void deleteById(long id) {
