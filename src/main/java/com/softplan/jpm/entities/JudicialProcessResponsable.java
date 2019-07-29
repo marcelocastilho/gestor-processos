@@ -1,26 +1,24 @@
 package com.softplan.jpm.entities;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class JudicialProcessResponsable implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2428462941751714079L;
-
+@Table(uniqueConstraints={
+	    @UniqueConstraint(columnNames = {"judicial_process_id", "person_id"})
+	}) 
+public class JudicialProcessResponsable {
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="judicialProcessResponsable_sequence")
 	@SequenceGenerator(name="judicialProcessResponsable_sequence", sequenceName="jpr_seq")
@@ -29,8 +27,8 @@ public class JudicialProcessResponsable implements Serializable {
 	@Column(name="judicial_process_id")
 	private long judicialProcessId;
 
-	@Column(name="people_id")
-	private long peopleId;
+	@Column(name="person_id")
+	private long personId;
 
 	public long getId() {
 		return id;
@@ -41,7 +39,7 @@ public class JudicialProcessResponsable implements Serializable {
 
 	public JudicialProcessResponsable(long judicialProcessId, long pessoaId) {		
 		this.judicialProcessId = judicialProcessId;
-		this.peopleId = pessoaId;		
+		this.personId = pessoaId;		
 	}
 
 	public long getJudicialProcessId() {
@@ -52,12 +50,12 @@ public class JudicialProcessResponsable implements Serializable {
 		this.judicialProcessId = judicialProcessId;
 	}
 
-	public long getPeopleId() {
-		return peopleId;
+	public long getPersonId() {
+		return personId;
 	}
 
-	public void setPeopleId(long pessoaId) {
-		this.peopleId = pessoaId;
+	public void setPersonId(long pessoaId) {
+		this.personId = pessoaId;
 	}	
 
 	@Override
@@ -65,7 +63,7 @@ public class JudicialProcessResponsable implements Serializable {
 		return "JudicialProcessResponsable{" +
 				"id=" + id +
 				"judicialProcessId=" + judicialProcessId +
-				",peopleId ='" + peopleId + '\'' +				
+				",personId ='" + personId + '\'' +				
 				'}';
 	}
 

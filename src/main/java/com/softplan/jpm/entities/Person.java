@@ -11,16 +11,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@Table(name="person")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class People{
+public class Person{
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="people_sequence")
-	@SequenceGenerator(name="people_sequence", sequenceName="people_sequence")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="person_sequence")
+	@SequenceGenerator(name="person_sequence", sequenceName="person_sequence")
 	private long id;
 	
 	private String name;
@@ -33,14 +35,14 @@ public class People{
 	//private byte[] picture;
 	
 	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "people_id")
+	@JoinColumn(name = "person_id")
 	private List<JudicialProcessResponsable> judicialProcessResponsables = new ArrayList<JudicialProcessResponsable>();
 
-	public People() {
+	public Person() {
 
 	}
 
-	public People(long id, String name) {
+	public Person(long id, String name) {
 		this.id = id;
 		this.name = name;		
 	}

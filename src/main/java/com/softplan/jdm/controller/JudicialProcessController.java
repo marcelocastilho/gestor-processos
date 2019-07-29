@@ -3,6 +3,9 @@ package com.softplan.jdm.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,18 +13,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softplan.jpm.entities.JudicialProcess;
 import com.softplan.jpm.entities.JudicialProcessResponsable;
-import com.softplan.jpm.entities.People;
+import com.softplan.jpm.entities.Person;
 import com.softplan.jpmt.service.JudicialProcessResponsableService;
 import com.softplan.jpmt.service.JudicialProcessService;
-import com.softplan.jpmt.service.PeopleService;
+import com.softplan.jpmt.service.PersonService;
 
 @RestController
 public class JudicialProcessController
 {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(JudicialProcessController.class);
+	
+	
 	@Autowired
 	private JudicialProcessService judicialProcessService;
 
@@ -29,7 +37,7 @@ public class JudicialProcessController
 	private JudicialProcessResponsableService judicialProcessResponsableService;
 
 	@Autowired
-	private PeopleService peopleService;
+	private PersonService personService;
 
 	@PostMapping(path= "/judicialprocess", consumes = "application/json", produces = "application/json")
 	public  ResponseEntity<Object> saveJudicialProcces(@RequestBody JudicialProcess judicialProcess) 
@@ -128,7 +136,7 @@ public class JudicialProcessController
 		}
 	}
 
-	@GetMapping(path= "/judicialprocess/{id}/responsables",  produces = "application/json")
+	@GetMapping(path= "/judicialprocess/{id}/responsable",  produces = "application/json")
 	public ResponseEntity<JudicialProcessResponsable> getResponsablesByJudicialProcessId(@PathVariable("id") long id) 
 	{
 		try {
@@ -144,13 +152,13 @@ public class JudicialProcessController
 
 	}
 
-	@PostMapping(path= "/people", consumes = "application/json", produces = "application/json")
-	public  ResponseEntity<Object> savePeople(@RequestBody People people) 
+	@PostMapping(path= "/person", consumes = "application/json", produces = "application/json")
+	public  ResponseEntity<Object> savePerson(@RequestBody Person person) 
 	{
 		try {
-			people = peopleService.persistPeople(people);
+			person = personService.persistPerson(person);
 			
-			return ResponseEntity.ok().body(people);		
+			return ResponseEntity.ok().body(person);		
 			
 		}
 		catch (Exception e) {
@@ -163,13 +171,24 @@ public class JudicialProcessController
 
 	}
 
-	@GetMapping(path= "/people", produces = "application/json")
-	public  ResponseEntity<Object> getAllPeople() 
+	@GetMapping(path= "/person", produces = "application/json")
+	public  ResponseEntity<Object> findPerson(@RequestParam(required = false) String name, @RequestParam(required = false) String document, @RequestParam(required = false) String email) 
 	{
 		try {
-			List<People> peoples = peopleService.getAllPeople();
+			
+			LOGGER.debug("name = " + name);
+			LOGGER.debug("document = " + document);
+			LOGGER.debug("email = " + email);
+			
+			List<Person> persons = null;
+			
+			if(StringUtils.isNotBlank(name) || StringUtils.isNotBlank(document) || StringUtils.isNotBlank(email)) {
+				persons = personService.findByName(name, null, null);
+			}else {
+				persons = personService.getAllPerson();
+			}
 
-			return ResponseEntity.status(HttpStatus.OK).body(peoples);
+			return ResponseEntity.status(HttpStatus.OK).body(persons);
 		}catch (Exception e) {
 			e.printStackTrace();
 
@@ -179,13 +198,13 @@ public class JudicialProcessController
 
 	}
 	
-	@GetMapping(path= "/people/{id}", produces = "application/json")
-	public  ResponseEntity<Object> getPeopleById(@PathVariable("id") long id) 
+	@GetMapping(path= "/person/{id}", produces = "application/json")
+	public  ResponseEntity<Object> getPersonById(@PathVariable("id") long id) 
 	{
 		try {
-			People people = peopleService.getPeopleById(id);
+			Person person = personService.getPersonById(id);
 
-			return ResponseEntity.status(HttpStatus.OK).body(people);
+			return ResponseEntity.status(HttpStatus.OK).body(person);
 		}catch (Exception e) {
 			e.printStackTrace();
 
@@ -193,5 +212,4 @@ public class JudicialProcessController
 					.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
-
 }

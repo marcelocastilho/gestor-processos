@@ -35,6 +35,9 @@ public class JudicialProcess {
 	private boolean secret;
 
 	private String physicalPath;
+	
+	//@Enumerated(EnumType.STRING)
+	//private JudicialProcessStatusEnum status;
 
 	@Column(columnDefinition = "text")
 	private String description;

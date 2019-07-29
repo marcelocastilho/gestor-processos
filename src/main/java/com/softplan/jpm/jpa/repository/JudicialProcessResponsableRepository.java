@@ -7,6 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import com.softplan.jpm.entities.JudicialProcessResponsable;
 
+/**
+ * Specifies methods used to obtain and modify JudicialProcesResponsable related information
+ * which is stored in the database.
+ * @author Marcelo Castilho
+ */
 @Repository
 public interface JudicialProcessResponsableRepository extends JpaRepository<JudicialProcessResponsable, Long> {
 	
