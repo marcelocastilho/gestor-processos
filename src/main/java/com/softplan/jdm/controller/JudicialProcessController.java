@@ -1,5 +1,6 @@
 package com.softplan.jdm.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softplan.jpm.entities.JudicialProcess;
 import com.softplan.jpm.entities.JudicialProcessResponsable;
 import com.softplan.jpm.entities.Person;
+import com.softplan.jpm.enun.JudicialProcessStatusEnum;
 import com.softplan.jpmt.service.JudicialProcessResponsableService;
 import com.softplan.jpmt.service.JudicialProcessService;
 import com.softplan.jpmt.service.PersonService;
@@ -28,8 +30,7 @@ public class JudicialProcessController
 {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(JudicialProcessController.class);
-	
-	
+		
 	@Autowired
 	private JudicialProcessService judicialProcessService;
 
@@ -75,12 +76,7 @@ public class JudicialProcessController
 		//judicialProcess.setUniqueProcessId("aaaa9999");
 		//judicialProcess.setDescription("Desc1");
 		//judicialProcess.setPhysicalPath("physicalPath1");
-		//
-		//JudicialProcessResponsable judicialProcessResponsable = new JudicialProcessResponsable();
-		//judicialProcessResponsable.setJudicialProcessId(01);
-		//judicialProcessResponsable.setPessoaId(01);
-		//
-		//judicialProcess.addJudicialProcessResponsables(judicialProcessResponsable);
+		//judicialProcess.setStatus(JudicialProcessStatusEnum.EM_ANDAMENTO);			
 		//
 		////Judicial 2
 		//JudicialProcess judicialProcess2 = new JudicialProcess();
@@ -88,14 +84,7 @@ public class JudicialProcessController
 		//judicialProcess2.setId(02);
 		//judicialProcess2.setUniqueProcessId("bbbb0000");
 		//judicialProcess2.setDescription("Desc2");
-		//judicialProcess2.setPhysicalPath("physicalPath2");
-		//
-		//JudicialProcessResponsable judicialProcessResponsable2 = new JudicialProcessResponsable();
-		//judicialProcessResponsable2.setJudicialProcessId(01);
-		//judicialProcessResponsable2.setPessoaId(01);
-		//
-		//judicialProcess2.addJudicialProcessResponsables(judicialProcessResponsable2);
-		//
+		//judicialProcess2.setPhysicalPath("physicalPath2");		
 		//
 		////Add all to test
 		//judicialProcessList.add(judicialProcess);
@@ -172,18 +161,20 @@ public class JudicialProcessController
 	}
 
 	@GetMapping(path= "/person", produces = "application/json")
-	public  ResponseEntity<Object> findPerson(@RequestParam(required = false) String name, @RequestParam(required = false) String document, @RequestParam(required = false) String email) 
+	public  ResponseEntity<Object> findPerson(@RequestParam(required = false) String name, 
+			@RequestParam(required = false) String document, 
+			@RequestParam(required = false) String email, 
+			@RequestParam(required = false, defaultValue = "0") long idProcesso)
 	{
 		try {
 			
-			LOGGER.debug("name = " + name);
-			LOGGER.debug("document = " + document);
-			LOGGER.debug("email = " + email);
-			
+			Person requestPerson = null;
+			long requestidProcesso = idProcesso;
 			List<Person> persons = null;
 			
-			if(StringUtils.isNotBlank(name) || StringUtils.isNotBlank(document) || StringUtils.isNotBlank(email)) {
-				persons = personService.findByName(name, null, null);
+			if(StringUtils.isNotBlank(name) || StringUtils.isNotBlank(document) || StringUtils.isNotBlank(email) || requestidProcesso > 0) {
+				requestPerson = new Person(name, email,document);
+				persons = personService.findPerson(requestPerson, requestidProcesso);
 			}else {
 				persons = personService.getAllPerson();
 			}

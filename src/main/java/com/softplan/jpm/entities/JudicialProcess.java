@@ -4,17 +4,28 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import com.softplan.jpm.enun.JudicialProcessStatusEnum;
 
 
 @Entity
@@ -36,8 +47,8 @@ public class JudicialProcess {
 
 	private String physicalPath;
 	
-	//@Enumerated(EnumType.STRING)
-	//private JudicialProcessStatusEnum status;
+	@Enumerated(EnumType.STRING)
+	private JudicialProcessStatusEnum status;
 
 	@Column(columnDefinition = "text")
 	private String description;
@@ -46,10 +57,17 @@ public class JudicialProcess {
 		return id;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY)
+	//@Fetch(FetchMode.SUBSELECT)
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.REMOVE })
 	@JoinColumn(name = "judicial_process_id")
 	private List<JudicialProcessResponsable> judicialProcessResponsables = new ArrayList<JudicialProcessResponsable>();
 
+	@JsonBackReference()
+	@JsonIdentityReference
+	@OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.DETACH)
+    @JoinColumn(name="parentJudicialProcess", unique=true)
+    private JudicialProcess parentJudicialProcess;
+	
 	public JudicialProcess(String uniqueProcessId, boolean secret, LocalDate distributionDate, String physicalPath) {		
 		this.uniqueProcessId = uniqueProcessId;
 		this.secret = secret;
@@ -104,6 +122,14 @@ public class JudicialProcess {
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	public String getStatus() {
+		return status.getStatus();
+	}
+
+	public void setStatus(JudicialProcessStatusEnum status) {
+		this.status = status;
+	}	
 
 //	public void addJudicialProcessResponsables(JudicialProcessResponsable judicialProcessResponsable) {
 //		if(this.judicialProcessResponsables == null) {

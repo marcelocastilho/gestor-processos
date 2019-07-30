@@ -1,4 +1,6 @@
-package com.softplan.jpm.enuns;
+package com.softplan.jpm.enun;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum JudicialProcessStatusEnum {
 
@@ -16,6 +18,7 @@ public enum JudicialProcessStatusEnum {
 		this.closed = closed;
 	}
 
+	@JsonValue
 	public String getStatus() {
 		return status;
 	}
@@ -30,5 +33,10 @@ public enum JudicialProcessStatusEnum {
 
 	public void setClosed(boolean closed) {
 		this.closed = closed;
+	}
+	
+	@Override
+	public String toString() {
+		return getStatus();
 	}
 }

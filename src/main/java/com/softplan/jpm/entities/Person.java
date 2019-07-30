@@ -3,6 +3,8 @@ package com.softplan.jpm.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -29,22 +31,24 @@ public class Person{
 	
 	private String email;
 	
+	@Column(unique=true)
 	private String document;
 	
 	//TODO implementar foto
 	//private byte[] picture;
 	
-	@OneToMany(fetch = FetchType.LAZY)
+	//@Fetch(FetchMode.SUBSELECT)
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.REMOVE })
 	@JoinColumn(name = "person_id")
 	private List<JudicialProcessResponsable> judicialProcessResponsables = new ArrayList<JudicialProcessResponsable>();
 
 	public Person() {
-
 	}
 
-	public Person(long id, String name) {
-		this.id = id;
+	public Person(String name, String email, String document) {
 		this.name = name;		
+		this.email = email;
+		this.document = document;
 	}
 	
 	public long getId() {
@@ -74,13 +78,17 @@ public class Person{
 	public void setDocument(String document) {
 		this.document = document;
 	}
+
+	public List<JudicialProcessResponsable> getJudicialProcessResponsables() {		
+		return judicialProcessResponsables;
+	}	
 	
-//	@Override
-//	public String toString() {
-//		return "Responsable{" +
-//				"id=" + id +
-//				", name='" + name + '\'' +
-//				'}';
-//	}
+	@Override
+	public String toString() {
+		return "Responsable{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				'}';
+	}
 
 }

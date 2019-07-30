@@ -14,22 +14,22 @@ Banco de dados
 
 
 Tarefas
-	Criar Projeto 
+	Criar Projeto ok
 		2h
-	Expor REST Consulta Processos
+	Expor REST Consulta Processos ok
 		4h
 
-	Expor REST Consulta Responsavel
+	Expor REST Consulta Responsavel ok
 		4h
-		Parte do nome do responsável
-		Cpf (formatado e não formatado)
-		Por número do processo que o responsável esteja vinculado (número do processo formatado e não formatado)
+		Parte do nome do responsável ok
+		Cpf (formatado e não formatado) ok 
+		Por número do processo que o responsável esteja vinculado (número do processo formatado e não formatado) ok
 
-	Criar entidade Situacao e ligar ao processo
+	Criar entidade Situacao e ligar ao processo ok
 		2h
 
-	Expor REST cadastro Processo
-		2h
+	Expor REST cadastro Processo ok
+		2h 
 
 	Validações cadastro Processo
 		4h
@@ -42,21 +42,24 @@ Tarefas
 
 	Expor REST Edição de Processo (quando != finalizada)
 		2h
-		Enviar Email para novos envolvido
+		Enviar Email para novos envolvidos
 			2h
 
 	Expor REST para excluir processos (quando != finalizada e != de 'processo tem filhos')
 		2h
 
 	Expor REST para cadastrar e editar Responsável
-		4h
+		4h falta ok
 		2h(foto)
 
 	Expor REST para excluir Responsável(quando != de 'vinculado a um processo')
-		4h
+		4h 
 		2h(foto)
-
-	Total backend 42 horas
+		
+	Fazer tratamento de excecao e Logs
+		2h
+		
+	Total backend 44 horas
 
 Telas
 	Gestão de processos - Consulta processo

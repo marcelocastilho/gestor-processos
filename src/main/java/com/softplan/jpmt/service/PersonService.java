@@ -2,10 +2,18 @@ package com.softplan.jpmt.service;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.softplan.jpm.entities.Person;
+import com.softplan.jpm.jpa.repository.CustonPersonRepository;
 import com.softplan.jpm.jpa.repository.PersonRepository;
 
 @Service
@@ -13,6 +21,13 @@ public class PersonService {
 
 	@Autowired
 	private PersonRepository personRepository;
+	
+	@Autowired
+	private CustonPersonRepository custonPersonRepository;
+	
+	EntityManager em;
+	
+	private EntityManager entityMgrPerson= null;
 
 	public List<Person> getAllPerson() {
 		List<Person> responsable = personRepository.findAll();
@@ -29,8 +44,9 @@ public class PersonService {
 		return personRepository.getOne(id);
 	}
 	
-	public List<Person> findByName(String name, String document, String judicialProcessId) {
-		List<Person> responsable = personRepository.findByName(name);
-		return responsable;
+	public List<Person> findPerson(Person person, long requestidProcesso) {
+		
+		return custonPersonRepository.findPerson(person, requestidProcesso);
 	}
+	
 }
