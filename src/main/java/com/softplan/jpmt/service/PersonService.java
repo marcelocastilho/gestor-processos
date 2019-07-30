@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.softplan.jpm.entities.Person;
-import com.softplan.jpm.jpa.repository.CustonPersonRepository;
+import com.softplan.jpm.jpa.repository.CustomPersonRepository;
 import com.softplan.jpm.jpa.repository.PersonRepository;
 
 @Service
@@ -23,7 +23,7 @@ public class PersonService {
 	private PersonRepository personRepository;
 	
 	@Autowired
-	private CustonPersonRepository custonPersonRepository;
+	private CustomPersonRepository customPersonRepository;
 	
 	EntityManager em;
 	
@@ -46,7 +46,7 @@ public class PersonService {
 	
 	public List<Person> findPerson(Person person, long requestidProcesso) {
 		
-		return custonPersonRepository.findPerson(person, requestidProcesso);
+		return customPersonRepository.findPerson(person, requestidProcesso);
 	}
 	
 }

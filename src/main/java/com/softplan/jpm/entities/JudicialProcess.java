@@ -1,7 +1,7 @@
 package com.softplan.jpm.entities;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,17 +14,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.softplan.jpm.enun.JudicialProcessStatusEnum;
 
 
@@ -41,10 +38,12 @@ public class JudicialProcess {
 	//@Column(unique=true)
 	private String uniqueProcessId;
 
-	private LocalDate distributionDate;
+	@Temporal(TemporalType.DATE)
+	private Date distributionDate;
 
 	private boolean secret;
 
+	@NotBlank(message = "Enter a physicalPath ")
 	private String physicalPath;
 	
 	@Enumerated(EnumType.STRING)
@@ -61,14 +60,12 @@ public class JudicialProcess {
 	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.REMOVE })
 	@JoinColumn(name = "judicial_process_id")
 	private List<JudicialProcessResponsable> judicialProcessResponsables = new ArrayList<JudicialProcessResponsable>();
-
-	@JsonBackReference()
-	@JsonIdentityReference
-	@OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.DETACH)
+	
+	@OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
     @JoinColumn(name="parentJudicialProcess", unique=true)
     private JudicialProcess parentJudicialProcess;
 	
-	public JudicialProcess(String uniqueProcessId, boolean secret, LocalDate distributionDate, String physicalPath) {		
+	public JudicialProcess(String uniqueProcessId, boolean secret, Date distributionDate, String physicalPath) {		
 		this.uniqueProcessId = uniqueProcessId;
 		this.secret = secret;
 		this.distributionDate = distributionDate;
@@ -87,11 +84,11 @@ public class JudicialProcess {
 		this.uniqueProcessId = uniqueProcessId;
 	}
 
-	public LocalDate getDistributionDate() {
+	public Date getDistributionDate() {
 		return distributionDate;
 	}
 
-	public void setDistributionDate(LocalDate distributionDate) {
+	public void setDistributionDate(Date distributionDate) {
 		this.distributionDate = distributionDate;
 	}
 
@@ -129,7 +126,16 @@ public class JudicialProcess {
 
 	public void setStatus(JudicialProcessStatusEnum status) {
 		this.status = status;
-	}	
+	}
+
+	public JudicialProcess getParentJudicialProcess() {
+		return parentJudicialProcess;
+	}
+
+	public void setParentJudicialProcess(JudicialProcess parentJudicialProcess) {
+		this.parentJudicialProcess = parentJudicialProcess;
+	}
+	
 
 //	public void addJudicialProcessResponsables(JudicialProcessResponsable judicialProcessResponsable) {
 //		if(this.judicialProcessResponsables == null) {

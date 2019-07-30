@@ -40,7 +40,7 @@ public class JudicialProcessController
 	@Autowired
 	private PersonService personService;
 
-	@PostMapping(path= "/judicialprocess", consumes = "application/json", produces = "application/json")
+	@PostMapping(path="/judicialprocess", consumes="application/json", produces="application/json")
 	public  ResponseEntity<Object> saveJudicialProcces(@RequestBody JudicialProcess judicialProcess) 
 	{
 		//Validate the data
@@ -67,8 +67,9 @@ public class JudicialProcessController
 	public List<JudicialProcess> getAllJudicialProcess() 
 	{
 
-		List<JudicialProcess> judicialProcessList = new ArrayList<JudicialProcess>();
-		return judicialProcessService.getAllJudicialProcess();
+		List<JudicialProcess> judicialProcessList = judicialProcessService.getAllJudicialProcess();
+		//JudicialProcess jp = judicialProcessList.get(0).set
+		return judicialProcessList;
 		//Judicial 1
 		//JudicialProcess judicialProcess = new JudicialProcess();
 		//judicialProcess.setDistributionDate(LocalDate.now());

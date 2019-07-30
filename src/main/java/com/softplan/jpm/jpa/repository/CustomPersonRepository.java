@@ -29,7 +29,7 @@ import com.softplan.jpm.entities.Person;
  * @author Marcelo Castilho
  */
 @Repository
-public class CustonPersonRepository{
+public class CustomPersonRepository{
 
 	@PersistenceContext
 	private EntityManager em;
@@ -41,6 +41,7 @@ public class CustonPersonRepository{
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		CriteriaQuery<Person> cq = cb.createQuery(Person.class);
+		
 		Root<Person> rPerson = cq.from(Person.class);
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
@@ -63,14 +64,13 @@ public class CustonPersonRepository{
 		}
 		if(idJudicialProject > 0) {
 			Join<Person, JudicialProcessResponsable > join = rPerson.join("judicialProcessResponsables");
-			Path<Long> campoPetId = join.get("id");
-			Predicate predPets = cb.isTrue(campoPetId.in(idJudicialProject));
-			predicates.add(predPets);
+			Path<Long> campoProcessId = join.get("judicialProcessId");
+			Predicate ResponsablePredicate = cb.isTrue(campoProcessId.in(idJudicialProject));
+			predicates.add(ResponsablePredicate);
 		}
 
 		cq.where(predicates.toArray(new Predicate[predicates.size()]));
-		//CriteriaQuery<Person> selectQuery = q.select(c);
-
+		
 		TypedQuery<Person> typedQuery = em.createQuery(cq);
 		List<Person> employeeList = typedQuery.getResultList();
 

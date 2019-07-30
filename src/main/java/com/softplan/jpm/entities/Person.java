@@ -14,6 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -29,6 +32,9 @@ public class Person{
 	
 	private String name;
 	
+	@NotNull
+    @Email(message="Insert a valid e-mail")
+    @Size(max = 100, message="Max 100 characters")
 	private String email;
 	
 	@Column(unique=true)
