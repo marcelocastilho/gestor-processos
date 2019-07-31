@@ -38,22 +38,22 @@ Tarefas
 		2h
 
 	Expor Rest para listar processos e processos filhos
-		4h
+		4h falta 1h
 
 	Expor REST Edição de Processo (quando != finalizada)
 		2h
 		Enviar Email para novos envolvidos
 			2h
 
-	Expor REST para excluir processos (quando != finalizada e != de 'processo tem filhos')
+	Expor REST para excluir processos (quando != finalizada e != de 'processo tem filhos') ok
 		2h
 
 	Expor REST para cadastrar e editar Responsável
 		4h falta ok
 		2h(foto)
 
-	Expor REST para excluir Responsável(quando != de 'vinculado a um processo')
-		4h 
+	Expor REST para excluir Responsável(quando != de 'vinculado a um processo') 
+		4h falta 1h
 		2h(foto)
 		
 	Fazer tratamento de excecao e Logs
