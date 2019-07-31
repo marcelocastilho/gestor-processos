@@ -1,13 +1,7 @@
 package com.softplan.jpmt.service;
 
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,29 +18,30 @@ public class PersonService {
 	
 	@Autowired
 	private CustomPersonRepository customPersonRepository;
-	
-	EntityManager em;
-	
-	private EntityManager entityMgrPerson= null;
 
-	public List<Person> getAllPerson() {
+	public Optional<Person> getById(long id) {		
+		return personRepository.findById(id);
+	}
+	
+	public List<Person> getAll() {
 		List<Person> responsable = personRepository.findAll();
 		return responsable;
 	}
 	
-	public Person persistPerson(Person person) {
-		
-		return personRepository.save(person);
-	}
-	
-	public Person getPersonById(long id) {
-		
-		return personRepository.getOne(id);
-	}
-	
-	public List<Person> findPerson(Person person, long requestidProcesso) {
+	public List<Person> find(Person person, long requestidProcesso) {		
 		
 		return customPersonRepository.findPerson(person, requestidProcesso);
 	}
 	
+	public Person persist(Person person) {		
+		return personRepository.save(person);
+	}
+	
+	public void delete(Person person) {
+		personRepository.delete(person);
+	}	
+	
+	public void deleteById(long id) {
+		personRepository.deleteById(id);
+	}	
 }

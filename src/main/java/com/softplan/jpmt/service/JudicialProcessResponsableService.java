@@ -1,9 +1,13 @@
 package com.softplan.jpmt.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.softplan.jpm.entities.JudicialProcessResponsable;
+import com.softplan.jpm.jpa.repository.CustomJudicialProcessResponsableRepository;
 import com.softplan.jpm.jpa.repository.JudicialProcessResponsableRepository;
 
 @Service
@@ -11,34 +15,34 @@ public class JudicialProcessResponsableService {
 
 	@Autowired
 	private JudicialProcessResponsableRepository judicialProcessResponsableRepository;
-
-	public JudicialProcessResponsable getJudicialProcessResponsableByJudicialProcessId(long id) {
-		JudicialProcessResponsable judicialProcessResponsable = judicialProcessResponsableRepository.getOne(id);
-		return judicialProcessResponsable;
+	
+	@Autowired
+	private CustomJudicialProcessResponsableRepository customJudicialProcessResponsableRepository;
+	
+	public Optional<JudicialProcessResponsable> getById(long id) {
+		return judicialProcessResponsableRepository.findById(id);		
 	}
 	
-	public JudicialProcessResponsable persistJudicialProcess(JudicialProcessResponsable judicialProcessResponsable) {
+	public List<JudicialProcessResponsable> getAll() {
+		List<JudicialProcessResponsable> responsable = judicialProcessResponsableRepository.findAll();
+		return responsable;
+	}
+
+	public List<JudicialProcessResponsable> find(JudicialProcessResponsable judicialProcessResponsable) {
+		List<JudicialProcessResponsable> judicialProcessResponsables = customJudicialProcessResponsableRepository.findJudicialProcessResponsable(judicialProcessResponsable);
+		return judicialProcessResponsables;
+	}
+	
+	public JudicialProcessResponsable persist(JudicialProcessResponsable judicialProcessResponsable) {
 		
 		return judicialProcessResponsableRepository.save(judicialProcessResponsable);
 	}
-	
-//	public void deleteById(long id) {
-//        // Retrieve the movie with this ID
-//		JudicialProcess judicialProcess = judicialProcessRepository.getOne(id);
-//        if (judicialProcess != null) {
-//            try {
-//               
-//                judicialProcess.getResponsables().forEach(responsable -> {
-//                    responsable.getJudicialProcess().remove(judicialProcess);
-//                });
-//
-//                judicialProcessRepository.delete(judicialProcess);
-//                
-//            } catch (Exception e) {//TODO tirar este catch genérico
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-	
 
+	public void delete(JudicialProcessResponsable judicialProcessResponsable) {
+		judicialProcessResponsableRepository.delete(judicialProcessResponsable);
+	}	
+	
+	public void deleteById(long id) {
+		judicialProcessResponsableRepository.deleteById(id);
+	}	
 }

@@ -20,8 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class JudicialProcessResponsable {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="judicialProcessResponsable_sequence")
-	@SequenceGenerator(name="judicialProcessResponsable_sequence", sequenceName="jpr_seq")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="judicialprocessresponsable_sequence")
+	@SequenceGenerator(name="judicialprocessresponsable_sequence", sequenceName="jpr_seq")
 	private long id;
 
 	@Column(name="judicial_process_id")

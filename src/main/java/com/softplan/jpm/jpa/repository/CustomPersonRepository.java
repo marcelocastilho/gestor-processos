@@ -47,34 +47,34 @@ public class CustomPersonRepository{
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
 
-		if(!StringUtils.isEmpty(person.getName())) {
-			LOGGER.debug("Using email to find: " + person.getName());
+		if(!StringUtils.isEmpty(person.getName())) {			
+			LOGGER.debug("Using personNamePredicate with value: " + person.getName() );
 			Predicate personNamePredicate = cb.like(rPerson.get("name"), "%" + person.getName() + "%");
 			predicates.add(personNamePredicate);
 		}
 		if(!StringUtils.isEmpty(person.getEmail())) {
-			LOGGER.debug("Using email to find: " + person.getEmail() );
+			LOGGER.debug("Using personEmailPredicate with value: " + person.getEmail() );
 			Predicate personEmailPredicate = cb.equal(rPerson.get("email"), person.getEmail());
 			predicates.add(personEmailPredicate);
 		}
 		if(!StringUtils.isEmpty(person.getDocument())) {
-			LOGGER.debug("Using document to find: " + person.getDocument() );
+			LOGGER.debug("Using personDocumentPredicate with value: " + person.getDocument());			
 			Predicate personDocumentPredicate = cb.equal(rPerson.get("document"), person.getDocument());
 			predicates.add(personDocumentPredicate);
 		}
 		if(idJudicialProject > 0) {
+			LOGGER.debug("Using idJudicialProjectPredicate with value: " + idJudicialProject);		
 			Join<Person, JudicialProcessResponsable > join = rPerson.join("judicialProcessResponsables");
 			Path<Long> campoProcessId = join.get("judicialProcessId");
-			Predicate ResponsablePredicate = cb.isTrue(campoProcessId.in(idJudicialProject));
-			predicates.add(ResponsablePredicate);
+			Predicate idJudicialProjectPredicate = cb.isTrue(campoProcessId.in(idJudicialProject));
+			predicates.add(idJudicialProjectPredicate);
 		}
 
 		cq.where(predicates.toArray(new Predicate[predicates.size()]));
 		
 		TypedQuery<Person> typedQuery = em.createQuery(cq);
-		List<Person> employeeList = typedQuery.getResultList();
+		List<Person> personList = typedQuery.getResultList();
 
-		return employeeList;
-	}
-
+		return personList;
+	}	
 }

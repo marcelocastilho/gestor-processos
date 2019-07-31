@@ -3,6 +3,7 @@ package com.softplan.jpm.entities;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,8 +31,8 @@ import com.softplan.jpm.enun.JudicialProcessStatusEnum;
 public class JudicialProcess {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="judicialProcess_sequence")
-	@SequenceGenerator(name="judicialProcess_sequence", sequenceName="jp_seq")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="judicialprocess_sequence")
+	@SequenceGenerator(name="judicialprocess_sequence", sequenceName="jp_seq")
 	private long id;
 	
 	//@Size(min = 10)
@@ -41,7 +42,7 @@ public class JudicialProcess {
 	@Temporal(TemporalType.DATE)
 	private Date distributionDate;
 
-	private boolean secret;
+	private Boolean secret;
 
 	@NotBlank(message = "Enter a physicalPath ")
 	private String physicalPath;
@@ -75,7 +76,11 @@ public class JudicialProcess {
 	public JudicialProcess() {
 		
 	}
-	
+		
+	public void setId(long id) {
+		this.id = id;
+	}
+
 	public String getUniqueProcessId() {
 		return uniqueProcessId;
 	}
@@ -92,8 +97,12 @@ public class JudicialProcess {
 		this.distributionDate = distributionDate;
 	}
 
-	public boolean isSecret() {
+	public Boolean getSecret() {
 		return secret;
+	}
+	
+	public boolean isSecret() {
+		return secret.booleanValue();
 	}
 
 	public void setSecret(boolean secret) {
@@ -116,12 +125,8 @@ public class JudicialProcess {
 		this.description = description;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getStatus() {
-		return status.getStatus();
+	public JudicialProcessStatusEnum getStatus() {
+		return status;
 	}
 
 	public void setStatus(JudicialProcessStatusEnum status) {
@@ -136,25 +141,18 @@ public class JudicialProcess {
 		this.parentJudicialProcess = parentJudicialProcess;
 	}
 	
-
-//	public void addJudicialProcessResponsables(JudicialProcessResponsable judicialProcessResponsable) {
-//		if(this.judicialProcessResponsables == null) {
-//			this.judicialProcessResponsables = new ArrayList<JudicialProcessResponsable>();
-//		}	
-//		judicialProcessResponsables.add(judicialProcessResponsable);		
-//	}
-
-//	public List<JudicialProcessResponsable> getJudicialProcessResponsables() {
-//		return judicialProcessResponsables;
-//	}	
-
-//	@Override
-//	public String toString() {
-//		return "JudicialProcess{" +
-//				"uniqueProcessId=" + uniqueProcessId +
-//				", distributionDate='" + distributionDate.toString() + '\'' +
-//				", responsables='" + responsables.stream().map(Responsable::getName).collect(Collectors.toList()) + '\'' +
-//				'}';
-//	}
+	@Override
+	public String toString() {
+		return "JudicialProcess{" +
+				"Id=" + id +
+				", uniqueProcessId=" + uniqueProcessId +
+				", distributionDate='" + distributionDate.toString() + '\'' +
+				", secret=" + secret +
+				", physicalPath='" + physicalPath + '\'' +
+				", status='" + status.getStatus() + '\'' +
+				", description='" + description + '\'' +
+				", responsables='" + judicialProcessResponsables.stream().map(JudicialProcessResponsable::getJudicialProcessId).collect(Collectors.toList()) + '\'' +
+				'}';
+	}
 
 }

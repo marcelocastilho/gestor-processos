@@ -1,51 +1,46 @@
 package com.softplan.jdm.controller;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softplan.jpm.entities.JudicialProcess;
 import com.softplan.jpm.entities.JudicialProcessResponsable;
-import com.softplan.jpm.entities.Person;
-import com.softplan.jpm.enun.JudicialProcessStatusEnum;
 import com.softplan.jpmt.service.JudicialProcessResponsableService;
 import com.softplan.jpmt.service.JudicialProcessService;
-import com.softplan.jpmt.service.PersonService;
 
 @RestController
+@RequestMapping("judicialprocess")
 public class JudicialProcessController
 {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(JudicialProcessController.class);
-		
+
 	@Autowired
 	private JudicialProcessService judicialProcessService;
 
 	@Autowired
 	private JudicialProcessResponsableService judicialProcessResponsableService;
-
-	@Autowired
-	private PersonService personService;
-
-	@PostMapping(path="/judicialprocess", consumes="application/json", produces="application/json")
+	
+	@PostMapping(path="/", consumes="application/json", produces="application/json")
 	public  ResponseEntity<Object> saveJudicialProcces(@RequestBody JudicialProcess judicialProcess) 
 	{
 		//Validate the data
 		try {
-			judicialProcess = judicialProcessService.persistJudicialProcess(judicialProcess);
+			judicialProcess = judicialProcessService.persist(judicialProcess);
 
 			return ResponseEntity.ok().body(judicialProcess);
 		}catch (javax.validation.ConstraintViolationException e) {
@@ -63,43 +58,26 @@ public class JudicialProcessController
 		}
 	}
 
-	@GetMapping("/judicialprocess")
-	public List<JudicialProcess> getAllJudicialProcess() 
+	@GetMapping("/")
+	public List<JudicialProcess>findJudicialProcess() 
 	{
 
-		List<JudicialProcess> judicialProcessList = judicialProcessService.getAllJudicialProcess();
-		//JudicialProcess jp = judicialProcessList.get(0).set
+		List<JudicialProcess> judicialProcessList = judicialProcessService.getAll();
 		return judicialProcessList;
-		//Judicial 1
-		//JudicialProcess judicialProcess = new JudicialProcess();
-		//judicialProcess.setDistributionDate(LocalDate.now());
-		//judicialProcess.setId(01);
-		//judicialProcess.setUniqueProcessId("aaaa9999");
-		//judicialProcess.setDescription("Desc1");
-		//judicialProcess.setPhysicalPath("physicalPath1");
-		//judicialProcess.setStatus(JudicialProcessStatusEnum.EM_ANDAMENTO);			
-		//
-		////Judicial 2
-		//JudicialProcess judicialProcess2 = new JudicialProcess();
-		//judicialProcess2.setDistributionDate(LocalDate.now());
-		//judicialProcess2.setId(02);
-		//judicialProcess2.setUniqueProcessId("bbbb0000");
-		//judicialProcess2.setDescription("Desc2");
-		//judicialProcess2.setPhysicalPath("physicalPath2");		
-		//
-		////Add all to test
-		//judicialProcessList.add(judicialProcess);
-		//judicialProcessList.add(judicialProcess2);
-		//return judicialProcessList;
+
 	}
 
-	@GetMapping(path="/judicialprocess/{id}", produces = "application/json")
-	public ResponseEntity<Object> getAllJudicialProcess(@PathVariable("id") long id) 
+	@GetMapping(path="/{id}", produces = "application/json")
+	public ResponseEntity<Object> getByJudicialProcessId(@PathVariable("id") long id) 
 	{
 		try {
-			JudicialProcess judicialProcess = judicialProcessService.getById(id);
-
-			return ResponseEntity.status(HttpStatus.OK).body(judicialProcess);
+			Optional<JudicialProcess> judicialProcess = judicialProcessService.getById(id);
+			if(judicialProcess.isPresent()) {
+					
+				return ResponseEntity.status(HttpStatus.OK).body(judicialProcess.get());
+			}else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot find JudicialProcess with id " + id);
+			}	
 
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -110,14 +88,54 @@ public class JudicialProcessController
 		}
 	}
 
-	@PostMapping(path= "/judicialprocess/responsable", consumes = "application/json", produces = "application/json")
-	public  ResponseEntity<Object> saveJudicialProcessResponsable(@RequestBody JudicialProcessResponsable judicialProcessResponsable) 
+	@DeleteMapping(path= "/{id}",  produces = "application/json")
+	public ResponseEntity<Object> deleteJudicialProcessById(@PathVariable("id") long id) 
 	{
 		try {
-			judicialProcessResponsable = judicialProcessResponsableService.persistJudicialProcess(judicialProcessResponsable);
-			return ResponseEntity.ok().body(judicialProcessResponsable);			
+			
+			Optional<JudicialProcess> judicialProcess = judicialProcessService.getById(id) ;
+			
+			if(judicialProcess.isPresent()) {
+				
+				JudicialProcess judicialProcessChild = judicialProcessService.findChild(judicialProcess.get().getId());
+				
+				//validate if exists child or is in closed status
+				if(judicialProcess.get().getStatus().isClosed() || judicialProcessChild != null) {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You cannot delete this JudicialProcess. There JudicialProcess is Closed or has child");
+				}else {
+					judicialProcessService.delete(judicialProcess.get());			
+					return ResponseEntity.status(HttpStatus.OK).body(null);
+				}
+				
+			}else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot find JudicialProcess with id " + id);
+			}			
+		}catch (Exception e) {
+			e.printStackTrace();
+
+			return ResponseEntity
+					.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
-		catch (Exception e) {
+	}
+
+	@GetMapping(path= "/responsable", produces = "application/json")
+	public  ResponseEntity<Object> findJudicialProcessResponsable(
+			@RequestParam(required = false, defaultValue = "0") long judicialProcessId,
+			@RequestParam(required = false, defaultValue = "0") long personId) 
+	{
+		try {
+
+			List<JudicialProcessResponsable> judicialProcessResponsables = null;
+
+			if(judicialProcessId > 0 || personId > 0) {
+				JudicialProcessResponsable requestJudicialProcessResponsable = new JudicialProcessResponsable(judicialProcessId, personId);
+				judicialProcessResponsables = judicialProcessResponsableService.find(requestJudicialProcessResponsable);
+			}else {
+				judicialProcessResponsables = judicialProcessResponsableService.getAll();
+			}
+
+			return ResponseEntity.status(HttpStatus.OK).body(judicialProcessResponsables);
+		}catch (Exception e) {
 			System.out.println(e.getStackTrace());
 
 			return ResponseEntity
@@ -126,82 +144,50 @@ public class JudicialProcessController
 		}
 	}
 
-	@GetMapping(path= "/judicialprocess/{id}/responsable",  produces = "application/json")
-	public ResponseEntity<JudicialProcessResponsable> getResponsablesByJudicialProcessId(@PathVariable("id") long id) 
+	@PostMapping(path= "/responsable", consumes = "application/json", produces = "application/json")
+	public  ResponseEntity<Object> saveJudicialProcessResponsable(@RequestBody JudicialProcessResponsable judicialProcessResponsable) 
 	{
-		try {
-			JudicialProcessResponsable judicialProcessResponsable = judicialProcessResponsableService.getJudicialProcessResponsableByJudicialProcessId(id);
+		try {	
+			if(judicialProcessResponsable.getJudicialProcessId() > 0 && judicialProcessResponsable.getPersonId() > 0) {				
+				judicialProcessResponsable = judicialProcessResponsableService.persist(judicialProcessResponsable);
+			}else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You cannot persist JudicialProcessResponsable with '0' parameters.");
+			}
 
 			return ResponseEntity.status(HttpStatus.OK).body(judicialProcessResponsable);
 		}catch (Exception e) {
-			e.printStackTrace();
+				System.out.println(e.getStackTrace());
 
-			return ResponseEntity
-					.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
-
-	}
-
-	@PostMapping(path= "/person", consumes = "application/json", produces = "application/json")
-	public  ResponseEntity<Object> savePerson(@RequestBody Person person) 
-	{
-		try {
-			person = personService.persistPerson(person);
-			
-			return ResponseEntity.ok().body(person);		
-			
-		}
-		catch (Exception e) {
-			System.out.println(e.getStackTrace());
-
-			return ResponseEntity
-					.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(e.getStackTrace());
-		}
-
-	}
-
-	@GetMapping(path= "/person", produces = "application/json")
-	public  ResponseEntity<Object> findPerson(@RequestParam(required = false) String name, 
-			@RequestParam(required = false) String document, 
-			@RequestParam(required = false) String email, 
-			@RequestParam(required = false, defaultValue = "0") long idProcesso)
-	{
-		try {
-			
-			Person requestPerson = null;
-			long requestidProcesso = idProcesso;
-			List<Person> persons = null;
-			
-			if(StringUtils.isNotBlank(name) || StringUtils.isNotBlank(document) || StringUtils.isNotBlank(email) || requestidProcesso > 0) {
-				requestPerson = new Person(name, email,document);
-				persons = personService.findPerson(requestPerson, requestidProcesso);
-			}else {
-				persons = personService.getAllPerson();
+				return ResponseEntity
+						.status(HttpStatus.INTERNAL_SERVER_ERROR)
+						.body(e.getStackTrace());
 			}
-
-			return ResponseEntity.status(HttpStatus.OK).body(persons);
-		}catch (Exception e) {
-			e.printStackTrace();
-
-			return ResponseEntity
-					.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
-
-	}
 	
-	@GetMapping(path= "/person/{id}", produces = "application/json")
-	public  ResponseEntity<Object> getPersonById(@PathVariable("id") long id) 
-	{
-		try {
-			Person person = personService.getPersonById(id);
+	@DeleteMapping(path= "/responsable/{id}",  produces = "application/json")
+	public ResponseEntity<Object> deleteJudicialProcessResponsable(@PathVariable("id") long id) 
+		{
+			try {
+				Optional<JudicialProcessResponsable> judicialProcessResponsable = judicialProcessResponsableService.getById(id);
+				
+				if(judicialProcessResponsable.isPresent()) {
+					
+					Optional<JudicialProcess> judicialProcess = judicialProcessService.getById(judicialProcessResponsable.get().getJudicialProcessId());
+										
+					if(judicialProcess.isPresent() && judicialProcess.get().getStatus().isClosed()) {
+						return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You cannot delete this Responsable. There are closed JudicialProcess linked to this");
+					}else {
+						judicialProcessResponsableService.deleteById(id);
+						return ResponseEntity.status(HttpStatus.OK).body(null);
+					}					
+				}else {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot find JudicialProcess responsable with id " + id);					
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
 
-			return ResponseEntity.status(HttpStatus.OK).body(person);
-		}catch (Exception e) {
-			e.printStackTrace();
-
-			return ResponseEntity
-					.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
-	}
+				return ResponseEntity
+						.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			}
+	}	
 }
