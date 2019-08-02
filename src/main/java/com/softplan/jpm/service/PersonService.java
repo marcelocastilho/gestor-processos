@@ -1,4 +1,4 @@
-package com.softplan.jpmt.service;
+package com.softplan.jpm.service;
 
 import java.util.List;
 import java.util.Optional;

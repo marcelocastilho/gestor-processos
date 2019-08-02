@@ -1,7 +1,7 @@
 package com.softplan.jpm.entities;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,11 +18,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.softplan.jpm.enun.JudicialProcessStatusEnum;
 
 
@@ -34,51 +37,56 @@ public class JudicialProcess {
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="judicialprocess_sequence")
 	@SequenceGenerator(name="judicialprocess_sequence", sequenceName="jp_seq")
 	private long id;
-	
-	//@Size(min = 10)
-	//@Column(unique=true)
+
+	@NotBlank(message="{judicialprocess.uniqueProcessId.not.blank}")
+	@Size(min=20, max=20, message="{judicialprocess.uniqueProcessId.size.not.valid}")
+	@Column(unique=true)
 	private String uniqueProcessId;
+	
+	@NotNull(message = "{judicialprocess.distributionDate.not.null}")
+	private LocalDate distributionDate;
 
-	@Temporal(TemporalType.DATE)
-	private Date distributionDate;
-
+	@NotNull(message = "{judicialprocess.secret.not.null}")
 	private Boolean secret;
 
-	@NotBlank(message = "Enter a physicalPath ")
+	@NotBlank(message = "{judicialprocess.physicalPath.not.blank}")
 	private String physicalPath;
-	
+
+	@NotNull(message = "{judicialprocess.status.not.null}")
 	@Enumerated(EnumType.STRING)
 	private JudicialProcessStatusEnum status;
 
+	@NotBlank(message = "{judicialprocess.description.not.blank}")
 	@Column(columnDefinition = "text")
 	private String description;
-
-	public long getId() {
-		return id;
-	}
-
-	//@Fetch(FetchMode.SUBSELECT)
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.REMOVE })
-	@JoinColumn(name = "judicial_process_id")
-	private List<JudicialProcessResponsable> judicialProcessResponsables = new ArrayList<JudicialProcessResponsable>();
-	
-	@OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
-    @JoinColumn(name="parentJudicialProcess", unique=true)
-    private JudicialProcess parentJudicialProcess;
-	
-	public JudicialProcess(String uniqueProcessId, boolean secret, Date distributionDate, String physicalPath) {		
-		this.uniqueProcessId = uniqueProcessId;
-		this.secret = secret;
-		this.distributionDate = distributionDate;
-		this.physicalPath = physicalPath;
-	}
-	
-	public JudicialProcess() {
 		
+	public long getId() {
+		return this.id;
 	}
 		
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	@JsonInclude
+	@NotNull(message = "{judicialprocess.responsable.not.null}")
+	@OneToMany( mappedBy = "judicialProcess", cascade = CascadeType.ALL, orphanRemoval = true)	
+	private List<JudicialProcessResponsable> judicialProcessResponsable;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="childJudicialProcess", unique=true)
+	private JudicialProcess childJudicialProcess;
+
+	public JudicialProcess(String uniqueProcessId, Boolean secret, LocalDate distributionDate, String status, String physicalPath) {		
+		this.uniqueProcessId = uniqueProcessId;
+		this.secret = secret;
+		this.status= JudicialProcessStatusEnum.valueOf(status);
+		this.distributionDate = distributionDate;
+		this.physicalPath = physicalPath;
+	}
+
+	public JudicialProcess() {
+
 	}
 
 	public String getUniqueProcessId() {
@@ -89,18 +97,19 @@ public class JudicialProcess {
 		this.uniqueProcessId = uniqueProcessId;
 	}
 
-	public Date getDistributionDate() {
+	public LocalDate getDistributionDate() {
 		return distributionDate;
 	}
 
-	public void setDistributionDate(Date distributionDate) {
+	public void setDistributionDate(LocalDate distributionDate) {
 		this.distributionDate = distributionDate;
 	}
-
+	
+	@Transient
 	public Boolean getSecret() {
 		return secret;
 	}
-	
+
 	public boolean isSecret() {
 		return secret.booleanValue();
 	}
@@ -133,14 +142,41 @@ public class JudicialProcess {
 		this.status = status;
 	}
 
-	public JudicialProcess getParentJudicialProcess() {
-		return parentJudicialProcess;
+	public JudicialProcess getChildJudicialProcess() {
+		return childJudicialProcess;
 	}
 
-	public void setParentJudicialProcess(JudicialProcess parentJudicialProcess) {
-		this.parentJudicialProcess = parentJudicialProcess;
+	public void setChildJudicialProcess(JudicialProcess childJudicialProcess) {
+		this.childJudicialProcess = childJudicialProcess;
 	}
-	
+
+	public List<JudicialProcessResponsable> getJudicialProcessResponsable() {
+		return judicialProcessResponsable;
+	}
+
+	public void setJudicialProcessResponsable(List<JudicialProcessResponsable> judicialProcessResponsable) {
+		this.judicialProcessResponsable = judicialProcessResponsable;
+		
+		for (JudicialProcessResponsable judicialProcessResponsable2 : judicialProcessResponsable) {
+			judicialProcessResponsable2.setJudicialProcess(this);
+		}		
+	}
+
+	public void addJudicialProcessResponsable(JudicialProcessResponsable judicialProcessResponsable) {
+		if (judicialProcessResponsable == null) {
+			this.judicialProcessResponsable = new ArrayList<JudicialProcessResponsable>();
+		}
+		this.judicialProcessResponsable.add(judicialProcessResponsable);
+		judicialProcessResponsable.setJudicialProcess(this);
+	}
+
+	public void removeJudicialProcessResponsable(JudicialProcessResponsable judicialProcessResponsable) {
+		if (judicialProcessResponsable != null) {
+			this.judicialProcessResponsable.remove(judicialProcessResponsable);
+			judicialProcessResponsable.setJudicialProcess(null);
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "JudicialProcess{" +
@@ -151,7 +187,7 @@ public class JudicialProcess {
 				", physicalPath='" + physicalPath + '\'' +
 				", status='" + status.getStatus() + '\'' +
 				", description='" + description + '\'' +
-				", responsables='" + judicialProcessResponsables.stream().map(JudicialProcessResponsable::getJudicialProcessId).collect(Collectors.toList()) + '\'' +
+				//", responsables='" + judicialProcessResponsable.stream().map(JudicialProcessResponsable::getJudicialProcess).collect(Collectors.toList()) + '\'' +
 				'}';
 	}
 

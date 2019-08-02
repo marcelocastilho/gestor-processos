@@ -15,9 +15,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -30,21 +33,26 @@ public class Person{
 	@SequenceGenerator(name="person_sequence", sequenceName="person_sequence")
 	private long id;
 	
+	@NotBlank(message = "{person.name.not.blank}")
 	private String name;
 	
 	@NotNull
-    @Email(message="Insert a valid e-mail")
-    @Size(max = 100, message="Max 100 characters")
+	@NotBlank(message = "{person.email.not.blank}")
+    @Email(message="{person.email.not.valid}")
+    @Size(max = 100, message="{person.email.size.not.valid}")
 	private String email;
 	
+	@NotBlank(message = "{person.document.not.blank}")
 	@Column(unique=true)
+	@Pattern(regexp = "([0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}|[0-9]{11})",message="{person.document.not.valid}")
 	private String document;
 	
 	//TODO implementar foto
 	//private byte[] picture;
 	
 	//@Fetch(FetchMode.SUBSELECT)
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.REMOVE })
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH })
 	@JoinColumn(name = "person_id")
 	private List<JudicialProcessResponsable> judicialProcessResponsables = new ArrayList<JudicialProcessResponsable>();
 

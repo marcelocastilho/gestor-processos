@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.softplan.jdm.controller.JudicialProcessController;
+import com.softplan.jpm.controller.JudicialProcessController;
 import com.softplan.jpm.entities.JudicialProcessResponsable;
 import com.softplan.jpm.entities.Person;
 

@@ -12,54 +12,89 @@ Backend
 Banco de dados
 	H2
 
-
 Tarefas
 	Criar Projeto ok
 		2h
-	Expor REST Consulta Processos ok
-		4h
+		
+	Cadastrar Processo 
+		2h ok
+		Criar entidade Situacao e ligar ao processo
+		2h ok
+		Validações cadastro Processo
+		4h 
+		Spring Data REST Validators?
+		Enviar Email cadastro Processo
+		2h		
+	
+	Consultar Processos
+		4h ok
+		 Número de processo unificado (formatado e não formatado)
+		 Período de data de distribuição
+		 Por processos em segredo de justiça
+		 Por parte do texto da pasta física cliente
+		 Por uma determinada situação
+		 Por parte do nome do responsável  (NOK)
+	
+	Listar processos e processos filhos 
+		4h ok
+	
+	Editar Processo (quando != finalizada) 
+		2h ok
+		Enviar Email para novos envolvidos doing
+			2h 
 
-	Expor REST Consulta Responsavel ok
-		4h
+	Excluir processos (quando != finalizada e != de 'processo tem filhos') 
+		2h ok
+ 		Enviar e-mail para os envolvidos
+ 			1k
+ 			
+ ----------RESPONSAVEL----------
+ 
+ 	Cadastrar e editar Responsável
+		4h falta ok
+		2h(foto)		
+		
+	Consultar Responsavel 
+		4h ok
 		Parte do nome do responsável ok
 		Cpf (formatado e não formatado) ok 
 		Por número do processo que o responsável esteja vinculado (número do processo formatado e não formatado) ok
-
-	Criar entidade Situacao e ligar ao processo ok
-		2h
-
-	Expor REST cadastro Processo ok
-		2h 
-
-	Validações cadastro Processo
-		4h
-
-	Enviar Email cadastro Processo
-		2h
-
-	Expor Rest para listar processos e processos filhos
-		4h falta 1h
-
-	Expor REST Edição de Processo (quando != finalizada)
-		2h
-		Enviar Email para novos envolvidos
-			2h
-
-	Expor REST para excluir processos (quando != finalizada e != de 'processo tem filhos') ok
-		2h
-
-	Expor REST para cadastrar e editar Responsável
-		4h falta ok
-		2h(foto)
-
-	Expor REST para excluir Responsável(quando != de 'vinculado a um processo') 
+ 	
+ 	Excluir Responsável(quando != de 'vinculado a um processo') 
 		4h falta 1h
 		2h(foto)
-		
+	
+----------PESSOA------------
+
+	Cadastrar e editar Pessoa
+		4h ok
+		Validar entrada
+		2k ok
+	
+	Excluir Pessoa
+		2h ok
+		Não deve ser possível remover um responsável que esteja vinculado a um processo
+
+
+------------OUTROS------------
+	Paginar retorno dos serviços de busca 
+		3h
+	
 	Fazer tratamento de excecao e Logs
 		2h
 		
-	Total backend 44 horas
+	Docker
+		4h
+
+	Testes
+		6h
+		
+		
+	Melhorias:
+		Externalizar servico de envio de e-mail, fazendo somente o post a uma fila.
+		Isolar regras de negócio em algum framework que forneça + dinamicidade.  
+		
+	Total backend ?? horas
 
 Telas
 	Gestão de processos - Consulta processo
@@ -80,10 +115,6 @@ Telas
 
 	Total frontend 22 
 
-Docker
-	4h
 
-Testes
-	6h
 
 Total de horas 72 horas

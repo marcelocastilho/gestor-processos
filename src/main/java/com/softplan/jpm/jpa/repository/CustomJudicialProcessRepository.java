@@ -1,6 +1,9 @@
 package com.softplan.jpm.jpa.repository;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -8,6 +11,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -16,8 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.softplan.jdm.controller.JudicialProcessController;
+import com.softplan.jpm.controller.JudicialProcessController;
 import com.softplan.jpm.entities.JudicialProcess;
+import com.softplan.jpm.entities.JudicialProcessResponsable;
 
 /**
  * Specifies methods used to obtain and modify person related information
@@ -32,7 +38,7 @@ public class CustomJudicialProcessRepository{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JudicialProcessController.class);
 
-	public List<JudicialProcess> findJudicialProcess(JudicialProcess judicialProcess){
+	public List<JudicialProcess> findJudicialProcess(JudicialProcess judicialProcess, Date startDate, Date endDate, String reponsableName){
 
 		LOGGER.debug("Finding JudicialProcess: " + judicialProcess.toString());
 
@@ -48,9 +54,13 @@ public class CustomJudicialProcessRepository{
 			Predicate uniqueProcessIdPredicate = cb.equal(rJudicialProcess.get("unique_process_id"), judicialProcess.getUniqueProcessId());
 			predicates.add(uniqueProcessIdPredicate);
 		}
-		if(judicialProcess.getDistributionDate()!= null ) {
-			LOGGER.debug("Using personEmailPredicate with value: " + judicialProcess.getDistributionDate() );
-			Predicate distributionDatePredicate = cb.equal(rJudicialProcess.get("distributionDate"), judicialProcess.getDistributionDate());
+		if(startDate != null) {
+			LOGGER.debug("Using DistributionDatePredicate with value: " + judicialProcess.getDistributionDate() );
+			Predicate onStart = cb.greaterThanOrEqualTo(rJudicialProcess.get("distributionDate"), startDate);
+			LocalDate localdate = LocalDate.now();
+			Predicate onEnd = cb.lessThanOrEqualTo(rJudicialProcess.get("distributionDate"), endDate != null ? endDate : Date.from(localdate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+			
+			Predicate distributionDatePredicate = cb.between(rJudicialProcess.get("distributionDate"), onStart, onEnd);
 			predicates.add(distributionDatePredicate);
 		}
 		if(judicialProcess.getSecret() != null) {
@@ -58,10 +68,22 @@ public class CustomJudicialProcessRepository{
 			Predicate secretPredicate = cb.equal(rJudicialProcess.get("secret"), judicialProcess.isSecret());
 			predicates.add(secretPredicate);
 		}
+		if(!StringUtils.isEmpty(judicialProcess.getPhysicalPath())) {			
+			LOGGER.debug("Using physicalPathPredicate with value: " + judicialProcess.getPhysicalPath() );
+			Predicate physicalPathPredicate = cb.like(rJudicialProcess.get("physicalPath"), "%" + judicialProcess.getPhysicalPath() + "%");
+			predicates.add(physicalPathPredicate);
+		}	
 		if(judicialProcess.getStatus() != null) {
 			LOGGER.debug("Using statusPredicate with value: " + judicialProcess.getStatus());			
 			Predicate statusPredicate = cb.equal(rJudicialProcess.get("status"), judicialProcess.getStatus());
 			predicates.add(statusPredicate);
+		}
+		if(!StringUtils.isEmpty(reponsableName)) {
+			LOGGER.debug("Using reponsableNamePredicate with value: " + reponsableName);		
+			Join<JudicialProcess, JudicialProcessResponsable > join = rJudicialProcess.join("person_id");
+			Path<Long> campoProcessId = join.get("judicialProcessId");
+			Predicate reponsableNamePredicate = cb.isTrue(campoProcessId.in(reponsableName));
+			predicates.add(reponsableNamePredicate);
 		}
 
 		cq.where(predicates.toArray(new Predicate[predicates.size()]));
@@ -88,8 +110,8 @@ public class CustomJudicialProcessRepository{
 			List<Predicate> predicates = new ArrayList<Predicate>();
 
 			LOGGER.debug("Using uniqueProcessIdPredicate with value: " + judicialProcess.getId() );
-			Predicate parentJudicialProcessPredicate = cb.equal(rJudicialProcess.get("parentJudicialProcess"), judicialProcess);
-			predicates.add(parentJudicialProcessPredicate);
+			Predicate childJudicialProcessPredicate = cb.equal(rJudicialProcess.get("childJudicialProcess"), judicialProcess);
+			predicates.add(childJudicialProcessPredicate);
 
 			cq.where(predicates.toArray(new Predicate[predicates.size()]));
 

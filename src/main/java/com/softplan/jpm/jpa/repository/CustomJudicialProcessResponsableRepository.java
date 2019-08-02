@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.softplan.jdm.controller.JudicialProcessController;
+import com.softplan.jpm.controller.JudicialProcessController;
 import com.softplan.jpm.entities.JudicialProcessResponsable;
 
 /**
@@ -43,9 +43,9 @@ public class CustomJudicialProcessResponsableRepository{
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
-		if(judicialProcessResponsable.getJudicialProcessId() > 0) {
-			LOGGER.debug("Using personNamePredicate with value: " + judicialProcessResponsable.getJudicialProcessId());
-			Predicate judicialProcessPredicate = cb.equal(rResponsable.get("judicialProcessId"), judicialProcessResponsable.getJudicialProcessId());
+		if(judicialProcessResponsable.getJudicialProcess().getId() > 0) {
+			LOGGER.debug("Using personNamePredicate with value: " + judicialProcessResponsable.getJudicialProcess().getId());
+			Predicate judicialProcessPredicate = cb.equal(rResponsable.get("judicialProcessId"), judicialProcessResponsable.getJudicialProcess().getId());
 			predicates.add(judicialProcessPredicate);
 		}
 		if(judicialProcessResponsable.getPersonId() > 0) {

@@ -1,5 +1,6 @@
-package com.softplan.jpmt.service;
+package com.softplan.jpm.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.softplan.jpm.entities.JudicialProcess;
 import com.softplan.jpm.jpa.repository.CustomJudicialProcessRepository;
 import com.softplan.jpm.jpa.repository.JudicialProcessRepository;
+
 
 @Service
 public class JudicialProcessService {
@@ -29,13 +31,12 @@ public class JudicialProcessService {
 		return judicialProcessList;
 	}
 	
-	public List<JudicialProcess> find(JudicialProcess judicialProcess) {
-		List<JudicialProcess> judicialProcessList = customjudicialProcessRepository.findJudicialProcess(judicialProcess);
+	public List<JudicialProcess> find(JudicialProcess judicialProcess, Date startDate, Date endDate, String message) {
+		List<JudicialProcess> judicialProcessList = customjudicialProcessRepository.findJudicialProcess(judicialProcess, startDate, endDate, message);
 		return judicialProcessList;
 	}
 
 	public JudicialProcess persist(JudicialProcess judicialProcess) {
-
 		return judicialProcessRepository.save(judicialProcess);
 	}
 	
