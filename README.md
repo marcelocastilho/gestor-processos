@@ -44,8 +44,8 @@ E-mail send block code is commented
 
 ###Data base configuration properties is located in src/main/resources/application.properties
 
-### Data examples
-Data examples are located in file src/main/resources/JudicialProcess-soapui-project.xml
+### Data structure examples
+Data examples are located in file src/main/resources/JudicialProcess-soapui-project.xml. It is a SoapUi project that must be imported in SoapUi.
 
 # Utils Links
 
@@ -61,6 +61,11 @@ Data examples are located in file src/main/resources/JudicialProcess-soapui-proj
 # Running the application
 	1 - In the application path "gestor-processos-judiciais" run command mvn package.
 	2 - In the application path "gestor-processos-judiciais\target" run the command java -jar gestor-processos-judiciais-0.0.1-SNAPSHOT.jar
+	3 - The aplication runa at port 8080
+
+#Enviroument
+JAVA 1.8
+MAVEN 3.5
 
 ### Requisitos não entregues
 	Rodar em docker
