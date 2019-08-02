@@ -13,22 +13,22 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.softplan.jpm.controller.PersonController;
 import com.softplan.jpm.service.PersonService;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes= {PersonController.class, PersonService.class})
-@TestPropertySource(locations="classpath:test.properties")
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(classes= {PersonController.class, PersonService.class})
+//@TestPropertySource(locations="classpath:test.properties")
 public class PersonTests {
 
 	private MockMvc mockMvc;
 
-	@Autowired
+	//@Autowired
 	private PersonController personController;
 
-	@Before
+	//@Before
 	public void setUp() {
 		this.mockMvc = MockMvcBuilders.standaloneSetup(personController).build();
 	}
 
-	@Test
+	//@Test
 	public void contextLoads() {
 	}
 

@@ -13,19 +13,19 @@ import com.softplan.jpm.entities.Person;
 import com.softplan.jpm.jpa.repository.CustomPersonRepository;
 import com.softplan.jpm.main.GestorProcessosJudiciaisApplication;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = GestorProcessosJudiciaisApplication.class)
+//@RunWith(SpringRunner.class)
+//@ContextConfiguration(classes = GestorProcessosJudiciaisApplication.class)
 //@DataJpaTest
-@SpringBootTest
+//@SpringBootTest
 public class PersonRepositoryIntegrationTest {
 
-	@Autowired
+	//@Autowired
     private TestEntityManager entityManager;
  
-    @Autowired
+    //@Autowired
     private CustomPersonRepository customPersonRepository;
  
-    @Test
+    //@Test
 	public void whenFindByName_thenReturnEmployee() {
 		// given
 		Person person = new Person("alex", "alex@gmail.com","222222222");
