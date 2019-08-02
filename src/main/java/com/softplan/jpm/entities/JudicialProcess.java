@@ -3,7 +3,6 @@ package com.softplan.jpm.entities;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,12 +19,15 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.softplan.jpm.enun.JudicialProcessStatusEnum;
 
 
@@ -44,6 +46,8 @@ public class JudicialProcess {
 	private String uniqueProcessId;
 	
 	@NotNull(message = "{judicialprocess.distributionDate.not.null}")
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
 	private LocalDate distributionDate;
 
 	@NotNull(message = "{judicialprocess.secret.not.null}")
@@ -77,10 +81,10 @@ public class JudicialProcess {
 	@JoinColumn(name="childJudicialProcess", unique=true)
 	private JudicialProcess childJudicialProcess;
 
-	public JudicialProcess(String uniqueProcessId, Boolean secret, LocalDate distributionDate, String status, String physicalPath) {		
+	public JudicialProcess(String uniqueProcessId, Boolean secret, LocalDate distributionDate, JudicialProcessStatusEnum status, String physicalPath) {		
 		this.uniqueProcessId = uniqueProcessId;
-		this.secret = secret;
-		this.status= JudicialProcessStatusEnum.valueOf(status);
+		this.secret = secret;		
+		this.status= status;
 		this.distributionDate = distributionDate;
 		this.physicalPath = physicalPath;
 	}
@@ -182,10 +186,10 @@ public class JudicialProcess {
 		return "JudicialProcess{" +
 				"Id=" + id +
 				", uniqueProcessId=" + uniqueProcessId +
-				", distributionDate='" + distributionDate.toString() + '\'' +
+				//", distributionDate='" + distributionDate.toString() + '\'' +
 				", secret=" + secret +
 				", physicalPath='" + physicalPath + '\'' +
-				", status='" + status.getStatus() + '\'' +
+				//", status='" + status.getStatus() + '\'' +
 				", description='" + description + '\'' +
 				//", responsables='" + judicialProcessResponsable.stream().map(JudicialProcessResponsable::getJudicialProcess).collect(Collectors.toList()) + '\'' +
 				'}';

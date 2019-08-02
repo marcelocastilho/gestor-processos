@@ -41,17 +41,17 @@ Tarefas
 	Editar Processo (quando != finalizada) 
 		2h ok
 		Enviar Email para novos envolvidos doing
-			2h 
+			2h ok
 
 	Excluir processos (quando != finalizada e != de 'processo tem filhos') 
 		2h ok
  		Enviar e-mail para os envolvidos
- 			1k
+ 			1h ok
  			
  ----------RESPONSAVEL----------
  
  	Cadastrar e editar Responsável
-		4h falta ok
+		4h  ok
 		2h(foto)		
 		
 	Consultar Responsavel 
@@ -65,7 +65,6 @@ Tarefas
 		2h(foto)
 	
 ----------PESSOA------------
-
 	Cadastrar e editar Pessoa
 		4h ok
 		Validar entrada
@@ -78,21 +77,22 @@ Tarefas
 
 ------------OUTROS------------
 	Paginar retorno dos serviços de busca 
-		3h
+		3h ok
 	
 	Fazer tratamento de excecao e Logs
-		2h
+		2h 
 		
 	Docker
 		4h
 
 	Testes
-		6h
-		
+		6h	
 		
 	Melhorias:
 		Externalizar servico de envio de e-mail, fazendo somente o post a uma fila.
-		Isolar regras de negócio em algum framework que forneça + dinamicidade.  
+		Isolar regras de negócio em algum framework que forneça + dinamicidade. 
+		Buscar JudicialProcess por data
+		Buscar JudicialProcess por envolvido(usar JPQL)
 		
 	Total backend ?? horas
 

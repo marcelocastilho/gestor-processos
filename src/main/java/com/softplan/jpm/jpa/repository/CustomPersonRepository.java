@@ -16,6 +16,9 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -36,13 +39,15 @@ public class CustomPersonRepository{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JudicialProcessController.class);
 
-	public List<Person> findPerson(Person person, long idJudicialProject){
+	public Page<Person> findPerson(Person person, long idJudicialProject, Pageable pageable){
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		CriteriaQuery<Person> cq = cb.createQuery(Person.class);
 		
 		Root<Person> rPerson = cq.from(Person.class);
+		
+		cq.orderBy(cb.asc(rPerson.get("id")));
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
@@ -73,7 +78,15 @@ public class CustomPersonRepository{
 		cq.where(predicates.toArray(new Predicate[predicates.size()]));
 		
 		TypedQuery<Person> typedQuery = em.createQuery(cq);
-		List<Person> personList = typedQuery.getResultList();
+		int totalRows = typedQuery.getResultList().size();
+		
+		//pageflow control
+		//typedQuery.setFirstResult(pageable.getPageNumber());		
+		//typedQuery.setMaxResults(pageable.getPageSize());
+		
+		Page<Person> personList  = new PageImpl<Person>(typedQuery.getResultList(), pageable, totalRows);
+				
+		//List<Person> personList = typedQuery. getResultList();
 
 		return personList;
 	}	

@@ -19,11 +19,15 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.softplan.jpm.controller.JudicialProcessController;
 import com.softplan.jpm.entities.JudicialProcess;
 import com.softplan.jpm.entities.JudicialProcessResponsable;
+import com.softplan.jpm.entities.Person;
 
 /**
  * Specifies methods used to obtain and modify person related information
@@ -38,7 +42,7 @@ public class CustomJudicialProcessRepository{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JudicialProcessController.class);
 
-	public List<JudicialProcess> findJudicialProcess(JudicialProcess judicialProcess, Date startDate, Date endDate, String reponsableName){
+	public Page<JudicialProcess> findJudicialProcess(JudicialProcess judicialProcess, LocalDate startDate, LocalDate endDate, String reponsableName, Pageable pageable){
 
 		LOGGER.debug("Finding JudicialProcess: " + judicialProcess.toString());
 
@@ -46,6 +50,7 @@ public class CustomJudicialProcessRepository{
 		CriteriaQuery<JudicialProcess> cq = cb.createQuery(JudicialProcess.class);
 
 		Root<JudicialProcess> rJudicialProcess = cq.from(JudicialProcess.class);
+		cq.orderBy(cb.asc(rJudicialProcess.get("id")));
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
@@ -56,11 +61,14 @@ public class CustomJudicialProcessRepository{
 		}
 		if(startDate != null) {
 			LOGGER.debug("Using DistributionDatePredicate with value: " + judicialProcess.getDistributionDate() );
-			Predicate onStart = cb.greaterThanOrEqualTo(rJudicialProcess.get("distributionDate"), startDate);
 			LocalDate localdate = LocalDate.now();
-			Predicate onEnd = cb.lessThanOrEqualTo(rJudicialProcess.get("distributionDate"), endDate != null ? endDate : Date.from(localdate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+//			Predicate onStart = cb.greaterThanOrEqualTo(rJudicialProcess.get("distributionDate"), startDate);
+//			Predicate onEnd = cb.lessThanOrEqualTo(rJudicialProcess.get("distributionDate"), endDate != null ? endDate : Date.from(localdate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+//			
+//			Predicate distributionDatePredicate = cb.between(rJudicialProcess.get("distributionDate"), onStart, onEnd);
 			
-			Predicate distributionDatePredicate = cb.between(rJudicialProcess.get("distributionDate"), onStart, onEnd);
+			Predicate distributionDatePredicate =  cb.between(rJudicialProcess.get("distributionDate"), startDate,  endDate != null ? endDate : localdate);
+		  	
 			predicates.add(distributionDatePredicate);
 		}
 		if(judicialProcess.getSecret() != null) {
@@ -80,16 +88,18 @@ public class CustomJudicialProcessRepository{
 		}
 		if(!StringUtils.isEmpty(reponsableName)) {
 			LOGGER.debug("Using reponsableNamePredicate with value: " + reponsableName);		
-			Join<JudicialProcess, JudicialProcessResponsable > join = rJudicialProcess.join("person_id");
+			Join<JudicialProcess, JudicialProcessResponsable > join = rJudicialProcess.join("judicialProcessResponsable");
 			Path<Long> campoProcessId = join.get("judicialProcessId");
 			Predicate reponsableNamePredicate = cb.isTrue(campoProcessId.in(reponsableName));
 			predicates.add(reponsableNamePredicate);
 		}
-
+		
 		cq.where(predicates.toArray(new Predicate[predicates.size()]));
 
 		TypedQuery<JudicialProcess> typedQuery = em.createQuery(cq);
-		List<JudicialProcess> judicialProcessList = typedQuery.getResultList();
+		int totalRows = typedQuery.getResultList().size();
+			
+		Page<JudicialProcess> judicialProcessList  = new PageImpl<JudicialProcess>(typedQuery.getResultList(), pageable, totalRows);
 
 		return judicialProcessList;
 	}

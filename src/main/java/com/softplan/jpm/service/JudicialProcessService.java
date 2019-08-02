@@ -1,10 +1,16 @@
 package com.softplan.jpm.service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.softplan.jpm.entities.JudicialProcess;
@@ -26,13 +32,27 @@ public class JudicialProcessService {
 		return judicialProcessRepository.findById(id);
 	}
 
-	public List<JudicialProcess> getAll() {
-		List<JudicialProcess> judicialProcessList = judicialProcessRepository.findAll();
-		return judicialProcessList;
+	public Page<JudicialProcess> getAll(int page, int size) {
+				
+		PageRequest pageRequest = PageRequest.of(
+				page,
+				size,
+				Sort.Direction.ASC,
+				"name");
+		return new PageImpl<>(
+				judicialProcessRepository.findAll(), 
+				pageRequest, size);	
 	}
 	
-	public List<JudicialProcess> find(JudicialProcess judicialProcess, Date startDate, Date endDate, String message) {
-		List<JudicialProcess> judicialProcessList = customjudicialProcessRepository.findJudicialProcess(judicialProcess, startDate, endDate, message);
+	public Page<JudicialProcess> find(JudicialProcess judicialProcess, LocalDate startDate, LocalDate endDate, String responsableName, int page, int size) {
+		
+		PageRequest pageRequest = PageRequest.of(	
+				page,
+				size,
+				Sort.Direction.ASC,
+				"id");
+		
+		Page<JudicialProcess> judicialProcessList = customjudicialProcessRepository.findJudicialProcess(judicialProcess, startDate, endDate, responsableName, pageRequest);
 		return judicialProcessList;
 	}
 

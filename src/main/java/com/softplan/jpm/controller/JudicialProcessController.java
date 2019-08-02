@@ -3,18 +3,17 @@ package com.softplan.jpm.controller;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softplan.jpm.entities.JudicialProcess;
 import com.softplan.jpm.entities.JudicialProcessResponsable;
 import com.softplan.jpm.entities.Person;
+import com.softplan.jpm.enun.JudicialProcessStatusEnum;
 import com.softplan.jpm.exceptionhandling.RestBusinessValidation;
 import com.softplan.jpm.jpa.constant.EmailMessageConstants;
 import com.softplan.jpm.service.EmailService;
@@ -223,26 +223,33 @@ public class JudicialProcessController
 	}
 
 	@GetMapping("/")
-	public ResponseEntity<Object> findJudicialProcess(@RequestParam(required = false) String uniqueProcessId, 
-			@RequestParam(required = false) Date startDate,
-			@RequestParam(required = false) Date endDate,
+	public ResponseEntity<Page<JudicialProcess>> findJudicialProcess(@RequestParam(value = "page",required = false, defaultValue = "0") int page,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+			@RequestParam(required = false) String uniqueProcessId, 
+			@RequestParam(required = false) LocalDate startDate,
+			@RequestParam(required = false) LocalDate endDate,
 			@RequestParam(required = false) Boolean secret,
 			@RequestParam(required = false) String physicalPath,
 			@RequestParam(required = false) String status,
 			@RequestParam(required = false) String responsableName){
 
-		List<JudicialProcess> judicialProcessList;
+		Page<JudicialProcess> judicialProcessList;
 
 		if(uniqueProcessId != null || startDate != null ||
 				endDate != null || secret != null ||
 				status != null || physicalPath != null ||  
 				responsableName != null ) {
 
-			JudicialProcess judicialProcessRequest = new JudicialProcess(uniqueProcessId, secret, null, status, physicalPath);
+			Optional<JudicialProcessStatusEnum> optEnumStatus = Arrays.stream(JudicialProcessStatusEnum.values()).filter(l -> l.getStatus().equals(status)).findFirst();
+			JudicialProcessStatusEnum enumStatus = null;
+			if(optEnumStatus.isPresent()) {
+				enumStatus = optEnumStatus.get();
+			}
+			JudicialProcess judicialProcessRequest = new JudicialProcess(uniqueProcessId, secret, null, enumStatus, physicalPath);
 
-			judicialProcessList = judicialProcessService.find(judicialProcessRequest, startDate, endDate, responsableName);
+			judicialProcessList = judicialProcessService.find(judicialProcessRequest, startDate, endDate, responsableName, page, size);
 		}else {
-			judicialProcessList = judicialProcessService.getAll();			
+			judicialProcessList = judicialProcessService.getAll( page, size);			
 		}
 
 		return ResponseEntity.status(HttpStatus.OK).body(judicialProcessList);

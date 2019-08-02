@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -95,7 +98,9 @@ public class PersonController
 	}
 
 	@GetMapping(path= "/", produces = "application/json")
-	public  ResponseEntity<Object> findPerson(@RequestParam(required = false) String name, 
+	public  ResponseEntity<Page<Person>> findPerson(@RequestParam(value = "page",required = false, defaultValue = "0") int page,
+			@RequestParam(value = "size", required = false, defaultValue = "10") int size,
+			@RequestParam(required = false) String name, 
 			@RequestParam(required = false) String document, 
 			@RequestParam(required = false) String email, 
 			@RequestParam(required = false, defaultValue = "0") long idProcesso) {
@@ -103,13 +108,13 @@ public class PersonController
 
 			Person requestPerson = null;
 			long requestidProcesso = idProcesso;
-			List<Person> persons = null;
-
+			Page<Person> persons = null;			
+		
 			if(StringUtils.isNotBlank(name) || StringUtils.isNotBlank(document) || StringUtils.isNotBlank(email) || requestidProcesso > 0) {
 				requestPerson = new Person(name, email,document);
-				persons = personService.find(requestPerson, requestidProcesso);
+				persons = personService.find(requestPerson, requestidProcesso, page, size);
 			}else {
-				persons = personService.getAll();
+				persons = personService.getAll( page, size);
 			}
 
 			return ResponseEntity.status(HttpStatus.OK).body(persons);

@@ -15,7 +15,4 @@ import com.softplan.jpm.entities.Person;
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
-    List<Person> findAll();
-    
-    List<Person> findPerson(Person person);
 }
