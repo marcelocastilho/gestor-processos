@@ -9,7 +9,6 @@ import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -17,10 +16,12 @@ import javax.mail.internet.MimeMultipart;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.softplan.jpm.controller.JudicialProcessController;
 import com.softplan.jpm.entities.Person;
 
+@Service
 public class EmailService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JudicialProcessController.class);

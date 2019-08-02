@@ -80,14 +80,8 @@ public class CustomPersonRepository{
 		TypedQuery<Person> typedQuery = em.createQuery(cq);
 		int totalRows = typedQuery.getResultList().size();
 		
-		//pageflow control
-		//typedQuery.setFirstResult(pageable.getPageNumber());		
-		//typedQuery.setMaxResults(pageable.getPageSize());
-		
 		Page<Person> personList  = new PageImpl<Person>(typedQuery.getResultList(), pageable, totalRows);
-				
-		//List<Person> personList = typedQuery. getResultList();
-
+		
 		return personList;
 	}	
 }
