@@ -56,18 +56,28 @@ Data examples are located in file src/main/resources/JudicialProcess-soapui-proj
 	/swagger-ui.html
 
 ##H2 Data Base address
-	http://localhost:8080/h2 	
+	http://localhost:8080/h2
 
-# Running the application
-	1 - In the application path "gestor-processos-judiciais" run command: mvn package.
-	2 - In the application path "gestor-processos-judiciais\target" run the command: java -jar gestor-processos-judiciais-0.0.1-SNAPSHOT.jar -Denv_var=%SMTP_PROPERTIES_PATH%
-	3 - The aplication runa at port 8080
+# Running the application on host
+	1 - In the application path "gestor-processos-judiciais" run command: "mvn package".
+	2 - Create a system variable whith the path to file "gestor-processos-judiciais/src/main/resources/smtp.properties"
+		Ex.windows:  SMTP_PROPERTIES_PATH C:\smtp.properties 
+		Ex.linux:  SMTP_PROPERTIES_PATH ~/smtp.properties
+	2 - In the application path "gestor-processos-judiciais\target" run the command: "java -jar gestor-processos-judiciais-0.0.1-SNAPSHOT.jar"
+	3 - Aplication runs at port 8080 !!!
+
+# Running the application on docker ubuntu openjdk8
+	1 - Unzip the app file, or download on gitHub
+	2 - Get in the projeto folder
+	3 - Run command "docker build -t jpm-openjdk8:latest .
+	4 - Run commando "docker run -p 8080:8080 jpm-openjdk8:latest"
 
 #Environment Information
 JAVA 1.8
 MAVEN 3.5
-Environment variables:
-SMTP_PROPERTIES_PATH --> Ex.: C:\smtp.properties or ~/smtp.properties
+
+#System variables:
+
 
 ### Requisitos não entregues
 	Tests
