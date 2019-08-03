@@ -63,17 +63,20 @@ Data examples are located in file src/main/resources/JudicialProcess-soapui-proj
 	2 - In the application path "gestor-processos-judiciais\target" run the command java -jar gestor-processos-judiciais-0.0.1-SNAPSHOT.jar
 	3 - The aplication runa at port 8080
 
-#Enviroument
+#Environment Information
+
 JAVA 1.8
 MAVEN 3.5
+Environment variables:
+SMTP_PROPERTIES_PATH --> Ex.: C:\smtp.properties or ~/smtp.properties
 
 ### Requisitos não entregues
-	Rodar em docker
-	Testes
-	Buscar JudicialProcess por data
-	Buscar JudicialProcess por envolvido(usar JPQL)
+	Tests
+	Find JudicialProcess between dates
+	Find JudicialProcess by responsable(JPQL)
 
 ### Melhorias a serem executadas.:	
-	Implementar interface de comunicação entre camada exposta e camada de serviço
+	Implementar interface para comunicação entre camada exposta e camada de serviço
+	Melhorar retorno de erros de banco de dados
 	
 	

@@ -32,6 +32,7 @@ public class EmailService {
 	private static String username = "";
 	private static String password = "";
 	private static Properties smtpProp;
+	private static String smtpPropsFilePath;
 
 	static {
 
@@ -40,13 +41,16 @@ public class EmailService {
 			LOGGER.info("Creating a new instance of email service");
 			
 			LOGGER.info("Reading smtp.properties file");    	
-
-			String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-			System.out.println("rootPath = " + rootPath);
-			String smtpConfigPath = rootPath + "smtp.properties";
-
+			try {
+				smtpPropsFilePath = System.getenv("SMTP_PROPERTIES_PATH");
+				LOGGER.info("smtp properties file path: " + smtpPropsFilePath);
+			}catch(Exception e) {
+				LOGGER.error("Error reading smtp properties file: " + e.getMessage());
+				System.exit(1);
+			}
+			
 			smtpProp = new Properties(); 	
-			smtpProp.load(new FileInputStream(smtpConfigPath));
+			smtpProp.load(new FileInputStream(smtpPropsFilePath));
 			
 			from = smtpProp.getProperty("mail.smtp.from");
 			host = smtpProp.getProperty("mail.smtp.host");
@@ -83,15 +87,10 @@ public class EmailService {
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
 			mimeBodyPart.setContent(requestMessage, "text/html");
 
-			MimeBodyPart attachmentBodyPart = new MimeBodyPart();
-			attachmentBodyPart.attachFile(new File("pom.xml"));
-
 			Multipart multipart = new MimeMultipart();
 			multipart.addBodyPart(mimeBodyPart);
-			multipart.addBodyPart(attachmentBodyPart);
 
-			emailsMessage.setContent(multipart);
-			System.out.println("");
+			LOGGER.debug("Sending mail to: " + person.getEmail());
 			//Transport.send(emailsMessage);
 
 		} catch (Exception e) {

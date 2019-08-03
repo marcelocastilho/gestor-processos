@@ -77,7 +77,7 @@ public class JudicialProcess {
 	@OneToMany( mappedBy = "judicialProcess", cascade = CascadeType.ALL, orphanRemoval = true)	
 	private List<JudicialProcessResponsable> judicialProcessResponsable;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="childJudicialProcess", unique=true)
 	private JudicialProcess childJudicialProcess;
 
