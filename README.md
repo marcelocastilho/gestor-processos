@@ -64,7 +64,6 @@ Data examples are located in file src/main/resources/JudicialProcess-soapui-proj
 	3 - The aplication runa at port 8080
 
 #Environment Information
-
 JAVA 1.8
 MAVEN 3.5
 Environment variables:
