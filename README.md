@@ -59,8 +59,8 @@ Data examples are located in file src/main/resources/JudicialProcess-soapui-proj
 	http://localhost:8080/h2 	
 
 # Running the application
-	1 - In the application path "gestor-processos-judiciais" run command mvn package.
-	2 - In the application path "gestor-processos-judiciais\target" run the command java -jar gestor-processos-judiciais-0.0.1-SNAPSHOT.jar
+	1 - In the application path "gestor-processos-judiciais" run command: mvn package.
+	2 - In the application path "gestor-processos-judiciais\target" run the command: java -jar gestor-processos-judiciais-0.0.1-SNAPSHOT.jar -Denv_var=%SMTP_PROPERTIES_PATH%
 	3 - The aplication runa at port 8080
 
 #Environment Information

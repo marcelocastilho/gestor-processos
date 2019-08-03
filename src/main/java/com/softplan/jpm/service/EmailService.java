@@ -42,7 +42,7 @@ public class EmailService {
 			
 			LOGGER.info("Reading smtp.properties file");    	
 			try {
-				smtpPropsFilePath = System.getenv("SMTP_PROPERTIES_PATH");
+				smtpPropsFilePath = System.getenv().get("SMTP_PROPERTIES_PATH"); //System.getenv("SMTP_PROPERTIES_PATH");
 				LOGGER.info("smtp properties file path: " + smtpPropsFilePath);
 			}catch(Exception e) {
 				LOGGER.error("Error reading smtp properties file: " + e.getMessage());
